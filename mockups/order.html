@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Build Your Order | FarmCloud</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: hsl(32, 45%, 45%);
+      --primary-light: hsl(32, 45%, 55%);
+      --accent: hsl(16, 65%, 55%);
+      --bg: hsl(40, 33%, 96%);
+      --card: hsl(40, 30%, 98%);
+      --fg: hsl(25, 30%, 15%);
+      --muted: hsl(25, 15%, 45%);
+      --border: hsl(35, 25%, 85%);
+      --success: hsl(85, 35%, 40%);
+      --warning: hsl(38, 90%, 50%);
+      --radius: 0.625rem;
+      --shadow: 0 2px 12px -2px hsl(25 30% 15% / 0.08);
+      --shadow-lg: 0 4px 20px -4px hsl(25 30% 15% / 0.12);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--fg); }
+    a { text-decoration: none; color: inherit; }
+
+    .header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo { font-size: 1.4rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 0.5rem; }
+    .nav { display: flex; gap: 2rem; }
+    .nav a { font-size: 0.9rem; font-weight: 500; color: var(--muted); }
+    .nav a.active { color: var(--primary); }
+    .header-actions { display: flex; gap: 0.75rem; align-items: center; }
+    .lang-switch { background: transparent; border: 1px solid var(--border); border-radius: var(--radius); padding: 0.4rem 0.75rem; font-size: 0.8rem; font-family: inherit; color: var(--muted); cursor: pointer; }
+
+    .container { max-width: 900px; margin: 0 auto; padding: 0 1.5rem; }
+    .breadcrumb { padding: 1rem 0; font-size: 0.85rem; color: var(--muted); }
+    .breadcrumb a { color: var(--primary); }
+
+    /* Stepper */
+    .stepper {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      margin: 1.5rem 0 2.5rem;
+      position: relative;
+    }
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      position: relative;
+    }
+    .step::before {
+      content: '';
+      position: absolute;
+      top: 16px;
+      left: -50%;
+      right: 50%;
+      height: 2px;
+      background: var(--border);
+    }
+    .step:first-child::before { display: none; }
+    .step.completed::before { background: var(--primary); }
+    .step.active::before { background: var(--primary); }
+    .step-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: var(--card);
+      position: relative;
+      z-index: 2;
+      color: var(--muted);
+    }
+    .step.active .step-circle {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: white;
+    }
+    .step.completed .step-circle {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: white;
+    }
+    .step-label {
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+      font-weight: 500;
+    }
+    .step.active .step-label { color: var(--primary); font-weight: 600; }
+    .step.completed .step-label { color: var(--primary); }
+
+    /* Order Layout */
+    .order-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 2rem;
+      padding-bottom: 4rem;
+    }
+
+    /* Form Card */
+    .form-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+    .form-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .form-group { margin-bottom: 1.25rem; }
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 0.4rem;
+    }
+    .form-label .required { color: var(--accent); }
+    .form-input {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      font-family: inherit;
+      background: white;
+      color: var(--fg);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px hsl(32 45% 45% / 0.08); }
+    .form-input::placeholder { color: hsl(25, 15%, 70%); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-hint { font-size: 0.75rem; color: var(--muted); margin-top: 0.25rem; }
+    select.form-input { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23846E62' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.75rem center; padding-right: 2rem; }
+
+    /* Radio Options */
+    .radio-group { display: flex; flex-direction: column; gap: 0.75rem; }
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .radio-option:hover { border-color: hsl(32 45% 45% / 0.4); }
+    .radio-option.selected {
+      border-color: var(--primary);
+      background: hsl(32 45% 45% / 0.04);
+    }
+    .radio-dot {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .radio-option.selected .radio-dot {
+      border-color: var(--primary);
+    }
+    .radio-option.selected .radio-dot::after {
+      content: '';
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+    .radio-content { flex: 1; }
+    .radio-title { font-size: 0.9rem; font-weight: 500; }
+    .radio-desc { font-size: 0.75rem; color: var(--muted); margin-top: 0.1rem; }
+    .radio-price { font-size: 0.85rem; font-weight: 600; color: var(--primary); }
+
+    /* Order Summary */
+    .summary-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 80px;
+    }
+    .summary-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+    }
+    .summary-items { padding: 1rem 1.25rem; }
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid hsl(35 25% 92%);
+    }
+    .summary-item:last-child { border-bottom: none; }
+    .item-info { flex: 1; }
+    .item-name { font-size: 0.85rem; font-weight: 500; }
+    .item-detail { font-size: 0.75rem; color: var(--muted); }
+    .item-qty {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0 1rem;
+    }
+    .qty-btn {
+      width: 24px;
+      height: 24px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .qty-val { font-size: 0.85rem; font-weight: 500; min-width: 20px; text-align: center; }
+    .item-price { font-size: 0.9rem; font-weight: 600; white-space: nowrap; }
+
+    .summary-totals {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid var(--border);
+    }
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      padding: 0.3rem 0;
+    }
+    .total-row.grand {
+      font-size: 1rem;
+      font-weight: 700;
+      padding-top: 0.75rem;
+      margin-top: 0.5rem;
+      border-top: 2px solid var(--border);
+      color: var(--primary);
+    }
+
+    .summary-actions { padding: 1rem 1.25rem; border-top: 1px solid var(--border); }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1.5rem;
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      width: 100%;
+    }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-light); }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--muted); margin-top: 0.5rem; }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+    .secure-note {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 800px) {
+      .order-layout { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .stepper { gap: 0; }
+      .step-label { font-size: 0.6rem; }
+      .nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">🐐 FarmCloud</div>
+    <nav class="nav">
+      <a href="home.html">Home</a>
+      <a href="catalog.html">Catalog</a>
+      <a href="order.html" class="active">Order Now</a>
+      <a href="#">Track Order</a>
+    </nav>
+    <div class="header-actions">
+      <button class="lang-switch">العربية</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="home.html">Home</a> <span style="margin: 0 0.4rem;">›</span> Build Your Order
+    </div>
+
+    <!-- Stepper -->
+    <div class="stepper">
+      <div class="step completed">
+        <div class="step-circle">✓</div>
+        <div class="step-label">Items</div>
+      </div>
+      <div class="step active">
+        <div class="step-circle">2</div>
+        <div class="step-label">Your Info</div>
+      </div>
+      <div class="step">
+        <div class="step-circle">3</div>
+        <div class="step-label">Delivery</div>
+      </div>
+      <div class="step">
+        <div class="step-circle">4</div>
+        <div class="step-label">Payment</div>
+      </div>
+      <div class="step">
+        <div class="step-circle">5</div>
+        <div class="step-label">Review</div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="order-layout">
+      <!-- Form Section -->
+      <div>
+        <div class="form-card">
+          <div class="form-title">👤 Your Information</div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Full Name <span class="required">*</span></label>
+              <input type="text" class="form-input" placeholder="Mohammed Al-Rashid" value="Mohammed Al-Rashid">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone Number <span class="required">*</span></label>
+              <input type="tel" class="form-input" placeholder="+971 50 123 4567" value="+971 50 123 4567">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Area / Neighborhood <span class="required">*</span></label>
+            <select class="form-input">
+              <option>Dubai Marina</option>
+              <option>JBR</option>
+              <option>Downtown Dubai</option>
+              <option>Al Barsha</option>
+              <option>Business Bay</option>
+              <option>Jumeirah</option>
+              <option>Deira</option>
+              <option>Sharjah City</option>
+              <option>Ajman</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Delivery Address</label>
+            <input type="text" class="form-input" placeholder="Building name, apartment number, street">
+            <div class="form-hint">Include building name and apartment number for faster delivery</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Location Notes</label>
+            <input type="text" class="form-input" placeholder="e.g., Gate 2, near the mosque">
+          </div>
+        </div>
+
+        <!-- Delivery Method (preview of next step) -->
+        <div class="form-card" style="margin-top: 1.5rem; opacity: 0.5;">
+          <div class="form-title">🚚 Delivery Method</div>
+          <div class="radio-group">
+            <div class="radio-option selected">
+              <div class="radio-dot"></div>
+              <div class="radio-content">
+                <div class="radio-title">Home Delivery</div>
+                <div class="radio-desc">Delivered to your door within your time window</div>
+              </div>
+              <div class="radio-price">AED 50</div>
+            </div>
+            <div class="radio-option">
+              <div class="radio-dot"></div>
+              <div class="radio-content">
+                <div class="radio-title">Farm Pickup</div>
+                <div class="radio-desc">Pick up from our farm (Al Ain Road)</div>
+              </div>
+              <div class="radio-price">Free</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div>
+        <div class="summary-card">
+          <div class="summary-header">Order Summary</div>
+          <div class="summary-items">
+            <div class="summary-item">
+              <div class="item-info">
+                <div class="item-name">Whole Goat – Boer</div>
+                <div class="item-detail">25-30 kg live weight</div>
+              </div>
+              <div class="item-qty">
+                <button class="qty-btn">−</button>
+                <span class="qty-val">1</span>
+                <button class="qty-btn">+</button>
+              </div>
+              <div class="item-price">AED 1,200</div>
+            </div>
+            <div class="summary-item">
+              <div class="item-info">
+                <div class="item-name">Family Pack</div>
+                <div class="item-detail">5 kg mixed cuts</div>
+              </div>
+              <div class="item-qty">
+                <button class="qty-btn">−</button>
+                <span class="qty-val">2</span>
+                <button class="qty-btn">+</button>
+              </div>
+              <div class="item-price">AED 900</div>
+            </div>
+          </div>
+          <div class="summary-totals">
+            <div class="total-row">
+              <span>Subtotal</span>
+              <span>AED 2,100</span>
+            </div>
+            <div class="total-row">
+              <span>Delivery Fee</span>
+              <span>AED 50</span>
+            </div>
+            <div class="total-row grand">
+              <span>Total</span>
+              <span>AED 2,150</span>
+            </div>
+          </div>
+          <div class="summary-actions">
+            <button class="btn btn-primary">Continue to Delivery →</button>
+            <button class="btn btn-outline">← Back to Items</button>
+            <div class="secure-note">🔒 Secure checkout · Your data is protected</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

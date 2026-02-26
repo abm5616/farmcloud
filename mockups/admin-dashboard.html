@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | FarmCloud Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: hsl(32, 45%, 45%);
+      --primary-light: hsl(32, 50%, 55%);
+      --accent: hsl(16, 65%, 55%);
+      --bg: hsl(40, 33%, 96%);
+      --card: hsl(40, 30%, 98%);
+      --fg: hsl(25, 30%, 15%);
+      --muted: hsl(25, 15%, 45%);
+      --border: hsl(35, 25%, 85%);
+      --success: hsl(85, 35%, 40%);
+      --warning: hsl(38, 90%, 50%);
+      --destructive: hsl(8, 70%, 50%);
+      --radius: 0.625rem;
+      --shadow: 0 2px 12px -2px hsl(25 30% 15% / 0.08);
+      --shadow-lg: 0 4px 20px -4px hsl(25 30% 15% / 0.12);
+      --sidebar-bg: hsl(25, 25%, 18%);
+      --sidebar-fg: hsl(40, 25%, 92%);
+      --sidebar-muted: hsl(40, 15%, 55%);
+      --sidebar-accent: hsl(25, 20%, 25%);
+      --sidebar-highlight: hsl(32, 45%, 55%);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--fg); }
+    a { text-decoration: none; color: inherit; }
+
+    /* Layout */
+    .layout { display: flex; min-height: 100vh; }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: var(--sidebar-bg);
+      color: var(--sidebar-fg);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 50;
+    }
+    .sidebar-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--sidebar-accent);
+    }
+    .sidebar-logo {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--sidebar-highlight);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .sidebar-subtitle {
+      font-size: 0.7rem;
+      color: var(--sidebar-muted);
+      margin-top: 0.25rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .sidebar-nav {
+      flex: 1;
+      padding: 1rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0.75rem;
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      color: var(--sidebar-muted);
+      transition: all 0.15s;
+      cursor: pointer;
+    }
+    .nav-item:hover { background: var(--sidebar-accent); color: var(--sidebar-fg); }
+    .nav-item.active {
+      background: var(--sidebar-highlight);
+      color: white;
+      font-weight: 500;
+    }
+    .nav-icon { font-size: 1.1rem; width: 24px; text-align: center; }
+    .nav-label { font-size: 0.7rem; color: var(--sidebar-muted); text-transform: uppercase; letter-spacing: 0.08em; padding: 1rem 0.75rem 0.5rem; }
+    .sidebar-footer {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid var(--sidebar-accent);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--sidebar-highlight);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: white;
+    }
+    .user-info { flex: 1; }
+    .user-name { font-size: 0.85rem; font-weight: 500; }
+    .user-role { font-size: 0.7rem; color: var(--sidebar-muted); }
+
+    /* Main Content */
+    .main { flex: 1; margin-left: 260px; }
+
+    /* Top Bar */
+    .topbar {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+    .topbar-title { font-size: 1.25rem; font-weight: 600; }
+    .topbar-actions { display: flex; align-items: center; gap: 1rem; }
+    .notification-bell {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      cursor: pointer;
+      position: relative;
+    }
+    .notification-dot {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 8px;
+      height: 8px;
+      background: var(--destructive);
+      border-radius: 50%;
+    }
+    .topbar-date { font-size: 0.85rem; color: var(--muted); }
+
+    /* Dashboard Content */
+    .dashboard { padding: 2rem; }
+
+    /* KPI Cards */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .kpi-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      box-shadow: var(--shadow);
+    }
+    .kpi-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+    .kpi-label { font-size: 0.8rem; color: var(--muted); font-weight: 500; }
+    .kpi-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+    .kpi-icon-blue { background: hsl(210 80% 55% / 0.12); }
+    .kpi-icon-green { background: hsl(85 35% 40% / 0.12); }
+    .kpi-icon-amber { background: hsl(38 90% 50% / 0.12); }
+    .kpi-icon-red { background: hsl(8 70% 50% / 0.12); }
+    .kpi-value { font-size: 1.75rem; font-weight: 700; line-height: 1; margin-bottom: 0.25rem; }
+    .kpi-change { font-size: 0.75rem; display: flex; align-items: center; gap: 0.25rem; }
+    .kpi-up { color: var(--success); }
+    .kpi-down { color: var(--destructive); }
+
+    /* Tables */
+    .section-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 1.5rem;
+    }
+    .section-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .section-title { font-size: 1rem; font-weight: 600; }
+    .view-all {
+      font-size: 0.8rem;
+      color: var(--primary);
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .view-all:hover { text-decoration: underline; }
+    table { width: 100%; border-collapse: collapse; }
+    th {
+      text-align: left;
+      padding: 0.75rem 1.25rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border);
+      background: hsl(40 25% 96%);
+    }
+    td {
+      padding: 0.75rem 1.25rem;
+      font-size: 0.85rem;
+      border-bottom: 1px solid hsl(35 25% 92%);
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: hsl(40 30% 97%); }
+    .order-number { font-weight: 600; color: var(--primary); }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+    .status-new { background: hsl(210 80% 55% / 0.12); color: hsl(210, 80%, 45%); }
+    .status-confirmed { background: hsl(85 35% 40% / 0.12); color: var(--success); }
+    .status-preparing { background: hsl(38 90% 50% / 0.12); color: hsl(38, 70%, 40%); }
+    .status-delivery { background: hsl(260 60% 55% / 0.12); color: hsl(260, 60%, 50%); }
+    .status-completed { background: hsl(25 15% 45% / 0.1); color: var(--muted); }
+    .payment-paid { color: var(--success); font-weight: 500; }
+    .payment-unpaid { color: var(--destructive); font-weight: 500; }
+
+    /* Quick Actions */
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      padding: 1.25rem;
+    }
+    .action-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .action-btn:hover {
+      border-color: var(--primary);
+      background: hsl(32 45% 45% / 0.05);
+      transform: translateY(-2px);
+    }
+    .action-icon { font-size: 1.5rem; }
+    .action-label { font-size: 0.8rem; font-weight: 500; color: var(--fg); }
+
+    /* Two Column Layout */
+    .two-col {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 1100px) {
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .two-col { grid-template-columns: 1fr; }
+      .actions-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">🐐 FarmCloud</div>
+        <div class="sidebar-subtitle">Admin Portal</div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-item active">
+          <span class="nav-icon">📊</span> Dashboard
+        </div>
+        <div class="nav-item">
+          <span class="nav-icon">📦</span> Orders
+        </div>
+        <div class="nav-item">
+          <span class="nav-icon">🐐</span> Inventory
+        </div>
+        <div class="nav-item">
+          <span class="nav-icon">🏷️</span> Offers
+        </div>
+        <div class="nav-item">
+          <span class="nav-icon">🧾</span> Invoices
+        </div>
+        <div class="nav-label">Analytics</div>
+        <div class="nav-item">
+          <span class="nav-icon">📈</span> Reports
+        </div>
+        <div class="nav-label">Settings</div>
+        <div class="nav-item">
+          <span class="nav-icon">⚙️</span> Settings
+        </div>
+        <div class="nav-item">
+          <span class="nav-icon">👥</span> Users
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="avatar">AM</div>
+        <div class="user-info">
+          <div class="user-name">Ahmed M.</div>
+          <div class="user-role">Manager</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main">
+      <!-- Top Bar -->
+      <div class="topbar">
+        <div class="topbar-title">Dashboard</div>
+        <div class="topbar-actions">
+          <div class="topbar-date">Wed, Feb 26, 2026</div>
+          <div class="notification-bell">
+            🔔
+            <div class="notification-dot"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard Content -->
+      <div class="dashboard">
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-label">Today's Orders</span>
+              <div class="kpi-icon kpi-icon-blue">📦</div>
+            </div>
+            <div class="kpi-value">12</div>
+            <div class="kpi-change kpi-up">↑ 20% vs yesterday</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-label">Today's Revenue</span>
+              <div class="kpi-icon kpi-icon-green">💰</div>
+            </div>
+            <div class="kpi-value">AED 8,450</div>
+            <div class="kpi-change kpi-up">↑ 12% vs yesterday</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-label">Pending Orders</span>
+              <div class="kpi-icon kpi-icon-amber">⏳</div>
+            </div>
+            <div class="kpi-value">5</div>
+            <div class="kpi-change kpi-down">↓ 2 from yesterday</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-label">Available Stock</span>
+              <div class="kpi-icon kpi-icon-red">🐐</div>
+            </div>
+            <div class="kpi-value">34</div>
+            <div class="kpi-change" style="color: var(--muted);">18 goats, 16 sheep</div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div>
+            <!-- Recent Orders -->
+            <div class="section-card">
+              <div class="section-header">
+                <div class="section-title">Recent Orders</div>
+                <a class="view-all">View All →</a>
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Order</th>
+                    <th>Customer</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="order-number">#ORD-0047</td>
+                    <td>Mohammed Al-Rashid</td>
+                    <td>Whole Goat × 1</td>
+                    <td>AED 1,200</td>
+                    <td><span class="status-badge status-new">New</span></td>
+                    <td class="payment-unpaid">Unpaid</td>
+                  </tr>
+                  <tr>
+                    <td class="order-number">#ORD-0046</td>
+                    <td>Fatima K.</td>
+                    <td>Family Pack × 2</td>
+                    <td>AED 900</td>
+                    <td><span class="status-badge status-confirmed">Confirmed</span></td>
+                    <td class="payment-paid">Paid</td>
+                  </tr>
+                  <tr>
+                    <td class="order-number">#ORD-0045</td>
+                    <td>Ali Hassan</td>
+                    <td>Whole Sheep × 1</td>
+                    <td>AED 1,800</td>
+                    <td><span class="status-badge status-preparing">Preparing</span></td>
+                    <td class="payment-paid">Paid</td>
+                  </tr>
+                  <tr>
+                    <td class="order-number">#ORD-0044</td>
+                    <td>Sara A.</td>
+                    <td>Half Goat × 1</td>
+                    <td>AED 650</td>
+                    <td><span class="status-badge status-delivery">Out for Delivery</span></td>
+                    <td class="payment-paid">Paid</td>
+                  </tr>
+                  <tr>
+                    <td class="order-number">#ORD-0043</td>
+                    <td>Khalid B.</td>
+                    <td>Whole Goat × 2</td>
+                    <td>AED 2,400</td>
+                    <td><span class="status-badge status-completed">Completed</span></td>
+                    <td class="payment-paid">Paid</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div>
+            <!-- Quick Actions -->
+            <div class="section-card">
+              <div class="section-header">
+                <div class="section-title">Quick Actions</div>
+              </div>
+              <div class="actions-grid">
+                <button class="action-btn">
+                  <span class="action-icon">➕</span>
+                  <span class="action-label">New Order</span>
+                </button>
+                <button class="action-btn">
+                  <span class="action-icon">🐐</span>
+                  <span class="action-label">Add Animal</span>
+                </button>
+                <button class="action-btn">
+                  <span class="action-icon">🏷️</span>
+                  <span class="action-label">New Offer</span>
+                </button>
+                <button class="action-btn">
+                  <span class="action-icon">🧾</span>
+                  <span class="action-label">Invoice</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Today's Deliveries -->
+            <div class="section-card" style="margin-top: 1.5rem;">
+              <div class="section-header">
+                <div class="section-title">Today's Deliveries</div>
+                <a class="view-all">View All →</a>
+              </div>
+              <div style="padding: 1rem 1.25rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0; border-bottom: 1px solid hsl(35 25% 92%);">
+                  <div>
+                    <div style="font-size: 0.85rem; font-weight: 500;">#ORD-0044 – Sara A.</div>
+                    <div style="font-size: 0.75rem; color: var(--muted);">Dubai Marina · 2:00 PM</div>
+                  </div>
+                  <span class="status-badge status-delivery">En Route</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0; border-bottom: 1px solid hsl(35 25% 92%);">
+                  <div>
+                    <div style="font-size: 0.85rem; font-weight: 500;">#ORD-0042 – Rashid N.</div>
+                    <div style="font-size: 0.75rem; color: var(--muted);">Al Barsha · 4:00 PM</div>
+                  </div>
+                  <span class="status-badge status-preparing">Preparing</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0;">
+                  <div>
+                    <div style="font-size: 0.85rem; font-weight: 500;">#ORD-0041 – Layla M.</div>
+                    <div style="font-size: 0.75rem; color: var(--muted);">Sharjah · 6:00 PM</div>
+                  </div>
+                  <span class="status-badge status-confirmed">Scheduled</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catalog | FarmCloud</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: hsl(32, 45%, 45%);
+      --primary-light: hsl(32, 45%, 55%);
+      --accent: hsl(16, 65%, 55%);
+      --bg: hsl(40, 33%, 96%);
+      --card: hsl(40, 30%, 98%);
+      --fg: hsl(25, 30%, 15%);
+      --muted: hsl(25, 15%, 45%);
+      --border: hsl(35, 25%, 85%);
+      --success: hsl(85, 35%, 40%);
+      --warning: hsl(38, 90%, 50%);
+      --radius: 0.625rem;
+      --shadow: 0 2px 12px -2px hsl(25 30% 15% / 0.08);
+      --shadow-lg: 0 4px 20px -4px hsl(25 30% 15% / 0.12);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--fg); }
+    a { text-decoration: none; color: inherit; }
+
+    /* Header */
+    .header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 3px hsl(25 30% 15% / 0.05);
+    }
+    .logo { font-size: 1.4rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 0.5rem; }
+    .nav { display: flex; gap: 2rem; align-items: center; }
+    .nav a { font-size: 0.9rem; font-weight: 500; color: var(--muted); transition: color 0.2s; }
+    .nav a:hover, .nav a.active { color: var(--primary); }
+    .header-actions { display: flex; gap: 0.75rem; align-items: center; }
+    .lang-switch { background: transparent; border: 1px solid var(--border); border-radius: var(--radius); padding: 0.4rem 0.75rem; font-size: 0.8rem; font-family: inherit; color: var(--muted); cursor: pointer; }
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; border-radius: var(--radius); font-size: 0.875rem; font-weight: 500; font-family: inherit; cursor: pointer; border: none; transition: all 0.2s; }
+    .btn-whatsapp { background: #25D366; color: white; }
+    .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+    .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+    .btn-outline:hover { background: var(--primary); color: white; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      padding: 1rem 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .breadcrumb a { color: var(--primary); }
+    .breadcrumb span { margin: 0 0.4rem; }
+
+    /* Page Layout */
+    .page-header {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .page-title { font-size: 1.75rem; font-weight: 700; }
+    .controls {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+    .search-input {
+      flex: 1;
+      padding: 0.6rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      font-family: inherit;
+      background: var(--card);
+      color: var(--fg);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-input:focus { border-color: var(--primary); }
+    .search-input::placeholder { color: hsl(25, 15%, 65%); }
+    .select-input {
+      padding: 0.6rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.85rem;
+      font-family: inherit;
+      background: var(--card);
+      color: var(--fg);
+      cursor: pointer;
+      min-width: 160px;
+    }
+
+    /* Main Layout */
+    .catalog-layout {
+      display: flex;
+      gap: 2rem;
+      padding-bottom: 4rem;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      flex-shrink: 0;
+    }
+    .sidebar-sticky {
+      position: sticky;
+      top: 80px;
+    }
+    .filter-section { margin-bottom: 1.75rem; }
+    .filter-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .filter-option {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .checkbox {
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--border);
+      border-radius: 3px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .checkbox.checked {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+    .checkbox.checked::after {
+      content: '✓';
+      color: white;
+      font-size: 0.65rem;
+      font-weight: 700;
+    }
+    .range-display {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+    .range-bar {
+      width: 100%;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      position: relative;
+    }
+    .range-fill {
+      position: absolute;
+      height: 100%;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+    .range-thumb {
+      width: 14px;
+      height: 14px;
+      background: var(--primary);
+      border: 2px solid white;
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: var(--shadow);
+    }
+    .clear-filters {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      color: var(--accent);
+      background: none;
+      border: 1px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      font-family: inherit;
+      width: 100%;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .clear-filters:hover { background: var(--accent); color: white; }
+
+    /* Product Grid */
+    .catalog-main { flex: 1; }
+    .results-count {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+    .offer-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: all 0.2s;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+    }
+    .offer-card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-3px);
+    }
+    .offer-img {
+      width: 100%;
+      height: 180px;
+      background: linear-gradient(135deg, hsl(35 30% 88%), hsl(30 25% 82%));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      position: relative;
+    }
+    .offer-badge {
+      position: absolute;
+      top: 0.75rem;
+      left: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+    .badge-available { background: hsl(85 35% 40% / 0.15); color: var(--success); }
+    .badge-limited { background: hsl(38 90% 50% / 0.15); color: hsl(38, 70%, 40%); }
+    .badge-preorder { background: hsl(16 65% 55% / 0.15); color: var(--accent); }
+    .offer-info { padding: 1rem; }
+    .offer-type { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; margin-bottom: 0.25rem; }
+    .offer-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .offer-desc { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.5rem; line-height: 1.4; }
+    .offer-meta { display: flex; gap: 0.75rem; font-size: 0.75rem; color: var(--muted); margin-bottom: 0.75rem; }
+    .offer-meta span { display: flex; align-items: center; gap: 0.25rem; }
+    .offer-footer { display: flex; justify-content: space-between; align-items: center; }
+    .offer-price { font-size: 1.1rem; font-weight: 700; color: var(--primary); }
+    .offer-price-old { font-size: 0.8rem; color: var(--muted); text-decoration: line-through; margin-left: 0.4rem; font-weight: 400; }
+    .add-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      padding: 0.4rem 0.8rem;
+      font-size: 0.8rem;
+      font-family: inherit;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .add-btn:hover { background: var(--primary-light); }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .products-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 500px) {
+      .products-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">🐐 FarmCloud</div>
+    <nav class="nav">
+      <a href="home.html">Home</a>
+      <a href="catalog.html" class="active">Catalog</a>
+      <a href="order.html">Order Now</a>
+      <a href="#">Track Order</a>
+      <a href="#">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <button class="lang-switch">العربية</button>
+      <button class="btn btn-whatsapp btn-sm">💬 WhatsApp</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <a href="home.html">Home</a> <span>›</span> Catalog
+    </div>
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1 class="page-title">All Offers</h1>
+      <div class="controls">
+        <input type="text" class="search-input" placeholder="Search goats, sheep, packages...">
+        <select class="select-input">
+          <option>Newest First</option>
+          <option>Price: Low → High</option>
+          <option>Price: High → Low</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Catalog Layout -->
+    <div class="catalog-layout">
+      <!-- Sidebar Filters -->
+      <aside class="sidebar">
+        <div class="sidebar-sticky">
+          <div class="filter-label" style="font-size: 0.95rem; margin-bottom: 1rem;">🔍 Filter By</div>
+
+          <!-- Type Filter -->
+          <div class="filter-section">
+            <div class="filter-label">Species</div>
+            <label class="filter-option">
+              <div class="checkbox checked"></div>
+              Goats
+            </label>
+            <label class="filter-option">
+              <div class="checkbox"></div>
+              Sheep
+            </label>
+            <label class="filter-option">
+              <div class="checkbox"></div>
+              Packages
+            </label>
+          </div>
+
+          <!-- Availability -->
+          <div class="filter-section">
+            <div class="filter-label">Availability</div>
+            <label class="filter-option">
+              <div class="checkbox checked"></div>
+              Available
+            </label>
+            <label class="filter-option">
+              <div class="checkbox"></div>
+              Limited
+            </label>
+            <label class="filter-option">
+              <div class="checkbox"></div>
+              Pre-order
+            </label>
+          </div>
+
+          <!-- Price Range -->
+          <div class="filter-section">
+            <div class="filter-label">Price Range</div>
+            <div class="range-display">AED 200 – AED 3,000</div>
+            <div class="range-bar">
+              <div class="range-fill" style="left: 5%; width: 60%;"></div>
+              <div class="range-thumb" style="left: 5%;"></div>
+              <div class="range-thumb" style="left: 65%;"></div>
+            </div>
+          </div>
+
+          <!-- Breed -->
+          <div class="filter-section">
+            <div class="filter-label">Breed</div>
+            <label class="filter-option">
+              <div class="checkbox"></div>
+              Boer
+            </label>
+            <label class="filter-option">
+              <div class="checkbox"></div>
+              Najdi
+            </label>
+            <label class="filter-option">
+              <div class="checkbox"></div>
+              Somali
+            </label>
+            <label class="filter-option">
+              <div class="checkbox"></div>
+              Pakistani
+            </label>
+          </div>
+
+          <!-- Weight Range -->
+          <div class="filter-section">
+            <div class="filter-label">Weight Range</div>
+            <div class="range-display">10 kg – 50 kg</div>
+            <div class="range-bar">
+              <div class="range-fill" style="left: 10%; width: 50%;"></div>
+              <div class="range-thumb" style="left: 10%;"></div>
+              <div class="range-thumb" style="left: 60%;"></div>
+            </div>
+          </div>
+
+          <button class="clear-filters">✕ Clear Filters</button>
+        </div>
+      </aside>
+
+      <!-- Product Grid -->
+      <div class="catalog-main">
+        <div class="results-count">Showing 9 offers</div>
+        <div class="products-grid">
+
+          <div class="offer-card">
+            <div class="offer-img">🐐<span class="offer-badge badge-available">Available</span></div>
+            <div class="offer-info">
+              <div class="offer-type">Goat</div>
+              <div class="offer-title">Whole Goat – Boer Breed</div>
+              <div class="offer-desc">Premium Boer breed, farm-raised</div>
+              <div class="offer-meta"><span>⚖ 25-30 kg</span><span>🕐 6 months</span></div>
+              <div class="offer-footer">
+                <div class="offer-price">AED 1,200</div>
+                <button class="add-btn">Add to Order</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="offer-card">
+            <div class="offer-img">🐑<span class="offer-badge badge-available">Available</span></div>
+            <div class="offer-info">
+              <div class="offer-type">Sheep</div>
+              <div class="offer-title">Whole Sheep – Najdi</div>
+              <div class="offer-desc">Traditional Najdi, grass-fed</div>
+              <div class="offer-meta"><span>⚖ 35-40 kg</span><span>🕐 8 months</span></div>
+              <div class="offer-footer">
+                <div class="offer-price">AED 1,800</div>
+                <button class="add-btn">Add to Order</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="offer-card">
+            <div class="offer-img">🐐<span class="offer-badge badge-limited">Limited</span></div>
+            <div class="offer-info">
+              <div class="offer-type">Goat</div>
+              <div class="offer-title">Half Goat – Mixed Cut</div>
+              <div class="offer-desc">Fresh mixed cuts, approx 12 kg</div>
+              <div class="offer-meta"><span>⚖ 12 kg</span></div>
+              <div class="offer-footer">
+                <div class="offer-price">AED 650 <span class="offer-price-old">AED 750</span></div>
+                <button class="add-btn">Add to Order</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="offer-card">
+            <div class="offer-img">📦<span class="offer-badge badge-available">Available</span></div>
+            <div class="offer-info">
+              <div class="offer-type">Package</div>
+              <div class="offer-title">Family Pack</div>
+              <div class="offer-desc">Mixed goat & sheep premium cuts</div>
+              <div class="offer-meta"><span>⚖ 5 kg</span></div>
+              <div class="offer-footer">
+                <div class="offer-price">AED 450</div>
+                <button class="add-btn">Add to Order</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="offer-card">
+            <div class="offer-img">🐑<span class="offer-badge badge-preorder">Pre-order</span></div>
+            <div class="offer-info">
+              <div class="offer-type">Sheep</div>
+              <div class="offer-title">Whole Sheep – Somali</div>
+              <div class="offer-desc">Lean Somali breed, arriving next week</div>
+              <div class="offer-meta"><span>⚖ 30-35 kg</span><span>🕐 10 months</span></div>
+              <div class="offer-footer">
+                <div class="offer-price">AED 1,500</div>
+                <button class="add-btn">Pre-order</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="offer-card">
+            <div class="offer-img">🐐<span class="offer-badge badge-available">Available</span></div>
+            <div class="offer-info">
+              <div class="offer-type">Goat</div>
+              <div class="offer-title">Quarter Goat – Leg Cuts</div>
+              <div class="offer-desc">Premium leg portions, bone-in</div>
+              <div class="offer-meta"><span>⚖ 6-8 kg</span></div>
+              <div class="offer-footer">
+                <div class="offer-price">AED 380</div>
+                <button class="add-btn">Add to Order</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

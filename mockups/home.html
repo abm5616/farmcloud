@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home | FarmCloud</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: hsl(32, 45%, 45%);
+      --primary-light: hsl(32, 45%, 55%);
+      --accent: hsl(16, 65%, 55%);
+      --bg: hsl(40, 33%, 96%);
+      --card: hsl(40, 30%, 98%);
+      --fg: hsl(25, 30%, 15%);
+      --muted: hsl(25, 15%, 45%);
+      --border: hsl(35, 25%, 85%);
+      --success: hsl(85, 35%, 40%);
+      --warning: hsl(38, 90%, 50%);
+      --radius: 0.625rem;
+      --shadow: 0 2px 12px -2px hsl(25 30% 15% / 0.08);
+      --shadow-lg: 0 4px 20px -4px hsl(25 30% 15% / 0.12);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--fg); }
+    a { text-decoration: none; color: inherit; }
+
+    /* Header */
+    .header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 3px hsl(25 30% 15% / 0.05);
+    }
+    .logo {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .logo-icon { font-size: 1.6rem; }
+    .nav { display: flex; gap: 2rem; align-items: center; }
+    .nav a {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    .nav a:hover { color: var(--primary); }
+    .header-actions { display: flex; gap: 0.75rem; align-items: center; }
+    .lang-switch {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.4rem 0.75rem;
+      font-size: 0.8rem;
+      font-family: inherit;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-light); transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+    .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+    .btn-outline:hover { background: var(--primary); color: white; }
+    .btn-accent { background: var(--accent); color: white; }
+    .btn-accent:hover { opacity: 0.9; }
+    .btn-whatsapp { background: #25D366; color: white; }
+    .btn-whatsapp:hover { background: #1fb855; }
+    .btn-lg { padding: 0.8rem 1.8rem; font-size: 1rem; }
+    .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+
+    /* Hero */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, hsl(32 45% 45% / 0.06), var(--bg), hsl(16 65% 55% / 0.06));
+      padding: 5rem 0;
+    }
+    .hero-content {
+      max-width: 700px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 550px;
+      margin: 0 auto 2rem;
+      line-height: 1.6;
+    }
+    .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .hero-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.5;
+    }
+    .hero-blob-1 { width: 300px; height: 300px; background: hsl(32 45% 45% / 0.1); top: 20%; left: -5%; }
+    .hero-blob-2 { width: 300px; height: 300px; background: hsl(16 65% 55% / 0.1); bottom: 20%; right: -5%; }
+
+    /* Categories */
+    .section { padding: 4rem 0; }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      max-width: 750px;
+      margin: 0 auto;
+    }
+    .category-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      transition: all 0.2s;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+    }
+    .category-card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-4px);
+      border-color: hsl(32 45% 45% / 0.3);
+    }
+    .category-icon { font-size: 3rem; margin-bottom: 0.75rem; display: block; }
+    .category-name { font-size: 1.05rem; font-weight: 600; }
+    .category-count { font-size: 0.85rem; color: var(--muted); margin-top: 0.25rem; }
+
+    /* Featured Offers */
+    .offers-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+    .offers-header h2 { font-size: 1.75rem; font-weight: 700; }
+    .offers-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+    }
+    .offer-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: all 0.2s;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+    }
+    .offer-card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-4px);
+    }
+    .offer-img {
+      width: 100%;
+      height: 180px;
+      background: linear-gradient(135deg, hsl(35 30% 88%), hsl(30 25% 82%));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      position: relative;
+    }
+    .offer-badge {
+      position: absolute;
+      top: 0.75rem;
+      left: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+    .badge-available { background: hsl(85 35% 40% / 0.15); color: var(--success); }
+    .badge-limited { background: hsl(38 90% 50% / 0.15); color: hsl(38, 70%, 40%); }
+    .offer-info { padding: 1rem; }
+    .offer-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .offer-desc { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.75rem; line-height: 1.4; }
+    .offer-price { font-size: 1.1rem; font-weight: 700; color: var(--primary); }
+    .offer-price-old {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-decoration: line-through;
+      margin-left: 0.5rem;
+      font-weight: 400;
+    }
+
+    /* Delivery Info */
+    .delivery-section {
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 4rem 0;
+    }
+    .delivery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+    .delivery-item { display: flex; gap: 1rem; align-items: flex-start; }
+    .delivery-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius);
+      background: hsl(32 45% 45% / 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+    .delivery-title { font-weight: 600; margin-bottom: 0.25rem; }
+    .delivery-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
+
+    /* WhatsApp CTA */
+    .whatsapp-cta {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: var(--radius);
+      padding: 3rem;
+      text-align: center;
+      color: white;
+      margin: 4rem auto;
+      max-width: 1200px;
+    }
+    .whatsapp-cta h2 { font-size: 1.75rem; margin-bottom: 0.75rem; }
+    .whatsapp-cta p { opacity: 0.85; margin-bottom: 1.5rem; max-width: 500px; margin-left: auto; margin-right: auto; }
+
+    /* Footer */
+    .footer {
+      background: hsl(25, 25%, 15%);
+      color: hsl(40, 25%, 80%);
+      padding: 3rem 0 1.5rem;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    .footer-brand .logo { color: hsl(32, 45%, 55%); margin-bottom: 0.75rem; }
+    .footer-brand p { font-size: 0.85rem; line-height: 1.6; opacity: 0.7; }
+    .footer h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 1rem; color: hsl(40, 25%, 92%); }
+    .footer ul { list-style: none; }
+    .footer li { margin-bottom: 0.5rem; }
+    .footer li a { font-size: 0.85rem; opacity: 0.7; transition: opacity 0.2s; }
+    .footer li a:hover { opacity: 1; }
+    .footer-bottom {
+      border-top: 1px solid hsl(25, 20%, 22%);
+      padding-top: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      opacity: 0.6;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2rem; }
+      .categories-grid { grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+      .offers-grid { grid-template-columns: repeat(2, 1fr); }
+      .delivery-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .nav { display: none; }
+    }
+    @media (max-width: 480px) {
+      .offers-grid { grid-template-columns: 1fr; }
+      .hero-btns { flex-direction: column; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">
+      <span class="logo-icon">🐐</span>
+      FarmCloud
+    </div>
+    <nav class="nav">
+      <a href="catalog.html">Catalog</a>
+      <a href="order.html">Order Now</a>
+      <a href="#">Track Order</a>
+      <a href="#">About Us</a>
+      <a href="#">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <button class="lang-switch">العربية</button>
+      <button class="btn btn-whatsapp btn-sm">💬 WhatsApp</button>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-blob hero-blob-1"></div>
+    <div class="hero-blob hero-blob-2"></div>
+    <div class="container">
+      <div class="hero-content">
+        <h1>Premium Goat & Sheep Meat, Delivered Fresh</h1>
+        <p>Farm-raised, hand-selected livestock delivered to your doorstep across the UAE. Order online or visit our farm.</p>
+        <div class="hero-btns">
+          <a href="order.html" class="btn btn-primary btn-lg">Build Your Order →</a>
+          <a href="catalog.html" class="btn btn-outline btn-lg">View Catalog</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Browse Categories</h2>
+      <div class="categories-grid">
+        <a href="catalog.html?type=goat" class="category-card">
+          <span class="category-icon">🐐</span>
+          <div class="category-name">Goats</div>
+          <div class="category-count">12 offers</div>
+        </a>
+        <a href="catalog.html?type=sheep" class="category-card">
+          <span class="category-icon">🐑</span>
+          <div class="category-name">Sheep</div>
+          <div class="category-count">8 offers</div>
+        </a>
+        <a href="catalog.html?type=package" class="category-card">
+          <span class="category-icon">📦</span>
+          <div class="category-name">Packages</div>
+          <div class="category-count">5 offers</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Offers -->
+  <section class="section" style="padding-top: 0;">
+    <div class="container">
+      <div class="offers-header">
+        <h2>Featured Offers</h2>
+        <a href="catalog.html" class="btn btn-outline btn-sm">View All →</a>
+      </div>
+      <div class="offers-grid">
+        <div class="offer-card">
+          <div class="offer-img">
+            🐐
+            <span class="offer-badge badge-available">Available</span>
+          </div>
+          <div class="offer-info">
+            <div class="offer-title">Whole Goat – Boer Breed</div>
+            <div class="offer-desc">Premium Boer breed, 25-30 kg live weight</div>
+            <div class="offer-price">AED 1,200</div>
+          </div>
+        </div>
+        <div class="offer-card">
+          <div class="offer-img">
+            🐑
+            <span class="offer-badge badge-available">Available</span>
+          </div>
+          <div class="offer-info">
+            <div class="offer-title">Whole Sheep – Najdi</div>
+            <div class="offer-desc">Traditional Najdi sheep, 35-40 kg live weight</div>
+            <div class="offer-price">AED 1,800</div>
+          </div>
+        </div>
+        <div class="offer-card">
+          <div class="offer-img">
+            🐐
+            <span class="offer-badge badge-limited">Limited</span>
+          </div>
+          <div class="offer-info">
+            <div class="offer-title">Half Goat – Mixed Cut</div>
+            <div class="offer-desc">Fresh mixed cuts, approximately 12 kg</div>
+            <div class="offer-price">AED 650 <span class="offer-price-old">AED 750</span></div>
+          </div>
+        </div>
+        <div class="offer-card">
+          <div class="offer-img">
+            📦
+            <span class="offer-badge badge-available">Available</span>
+          </div>
+          <div class="offer-info">
+            <div class="offer-title">Family Pack</div>
+            <div class="offer-desc">Mixed goat & sheep, 5 kg premium cuts</div>
+            <div class="offer-price">AED 450</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Delivery Info -->
+  <section class="delivery-section">
+    <div class="container">
+      <div class="delivery-grid">
+        <div class="delivery-item">
+          <div class="delivery-icon">📍</div>
+          <div>
+            <div class="delivery-title">Farm Pickup Available</div>
+            <div class="delivery-desc">Visit our farm and select your animal in person. Open daily 7 AM – 7 PM.</div>
+          </div>
+        </div>
+        <div class="delivery-item">
+          <div class="delivery-icon">🚚</div>
+          <div>
+            <div class="delivery-title">UAE-Wide Delivery</div>
+            <div class="delivery-desc">We deliver fresh across all Emirates. Same-day delivery in Dubai & Sharjah.</div>
+          </div>
+        </div>
+        <div class="delivery-item">
+          <div class="delivery-icon">📞</div>
+          <div>
+            <div class="delivery-title">Contact Us</div>
+            <div class="delivery-desc">+971 50 123 4567<br>Open 7 days a week</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WhatsApp CTA -->
+  <section class="container">
+    <div class="whatsapp-cta">
+      <h2>Need Help Ordering?</h2>
+      <p>Have questions about our products? Reach out on WhatsApp for quick assistance.</p>
+      <button class="btn btn-whatsapp btn-lg">💬 Chat on WhatsApp</button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo"><span class="logo-icon">🐐</span> FarmCloud</div>
+          <p>Premium goat and sheep meat, raised with care on our farm and delivered fresh to your door across the UAE.</p>
+        </div>
+        <div>
+          <h4>Shop</h4>
+          <ul>
+            <li><a href="#">Goats</a></li>
+            <li><a href="#">Sheep</a></li>
+            <li><a href="#">Packages</a></li>
+            <li><a href="#">Track Order</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">FAQ</a></li>
+            <li><a href="#">Blog</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Policies</h4>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Use</a></li>
+            <li><a href="#">Delivery Policy</a></li>
+            <li><a href="#">Refund Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 FarmCloud. All rights reserved.</span>
+        <span>Made in UAE 🇦🇪</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
