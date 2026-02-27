@@ -12,7 +12,7 @@ from decouple import config
 ADMIN_URL_PATH = config('ADMIN_URL_PATH', default='admin')
 
 urlpatterns = [
-    path('', RedirectView.as_view(url=f'/{ADMIN_URL_PATH}/', permanent=False)),
+    # path('', RedirectView.as_view(url=f'/{ADMIN_URL_PATH}/', permanent=False)),
     path(f'{ADMIN_URL_PATH}/', admin.site.urls),
     path('api/', include('users.urls')),
     path('api/', include('orders.urls')),
